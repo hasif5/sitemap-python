@@ -36,6 +36,11 @@ python create_sitemap.py
 ```
 - Enter the full URL of the website when prompted. 
 
+Enter optional path to be ignored in the crawl in second prompt. Example:
+```bash
+/admin/,/rss/,/feed/
+```
+
 The script will crawl the website, generate a sitemap, and save it in a subdirectory named after the website's domain.
 
 ### File Structure

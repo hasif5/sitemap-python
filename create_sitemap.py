@@ -1,4 +1,3 @@
-# create_sitemap.py
 import os
 import xml.etree.ElementTree as ET
 from crawl import crawl
@@ -34,15 +33,24 @@ def save_sitemap(sitemap, directory, filename="sitemap.xml"):
         os.makedirs(directory)
     filepath = os.path.join(directory, filename)
     tree = ET.ElementTree(sitemap)
-    tree.write(filepath, encoding="utf-8", xml_declaration=True)
+
+    # Pretty-print the XML
+    from xml.dom import minidom
+    xmlstr = minidom.parseString(ET.tostring(sitemap)).toprettyxml(indent="   ")
+    with open(filepath, "w") as f:
+        f.write(xmlstr)
+
     return filepath
 
 if __name__ == "__main__":
     start_url = input("Enter the full URL of the website to crawl: ")
+    exclude_paths_input = input("Enter paths to exclude from the crawl, separated by commas (e.g., /feed/, /admin/): ")
+    exclude_paths = [path.strip() for path in exclude_paths_input.split(',')] if exclude_paths_input else []
+    
     parsed_url = urlparse(start_url)
     directory = parsed_url.netloc
 
-    crawled_urls = crawl(start_url, max_urls=100)
+    crawled_urls = crawl(start_url, max_urls=100, exclude_paths=exclude_paths)
     sitemap = create_sitemap(crawled_urls)
     sitemap_path = save_sitemap(sitemap, directory)
     print(f"Sitemap saved as {sitemap_path}")
